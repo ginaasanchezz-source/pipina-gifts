@@ -551,14 +551,16 @@ function cleanOldDuplicates() {
     );
   }
 } 
-  function openShop() {
-  const stars = Number(localStorage.getItem("pipinaStars")) || 0;
+ function openShop() {
+  const shop = document.getElementById("magicShop");
 
-  alert(
-    "🛍️✨ TIENDA MÁGICA ✨🛍️\n\n" +
-    "⭐ Tus estrellas: " + stars + "\n\n" +
-    "Muy pronto podrás canjear tus estrellas por regalos mágicos 🎁"
-  );
+  if (shop.style.display === "none") {
+    shop.style.display = "grid";
+    shop.style.gridTemplateColumns = "repeat(2, 1fr)";
+    shop.style.gap = "15px";
+  } else {
+    shop.style.display = "none";
+  }
 }
 
 cleanOldDuplicates();
