@@ -465,17 +465,22 @@ saveGift = function () {
   updateStars();
 };
 
-// 🧹 LIMPIAR DUPLICADOS QUE YA EXISTEN
+// 🧹 LIMPIAR DUPLICADOS Y CONVERTIRLOS EN ESTRELLAS
 function cleanOldDuplicates() {
-  const stored =
-    JSON.parse(localStorage.getItem("pipinaCollection")) || [];
+  const stored = JSON.parse(
+    localStorage.getItem("pipinaCollection") || "[]"
+  );
 
   const unique = [];
   let bonusStars = 0;
 
   stored.forEach(gift => {
-    const exists = unique.some(
-      item => item.name === gift.name
+    const giftName = String(gift.name || "")
+      .trim()
+      .toLowerCase();
+
+    const exists = unique.some(item =>
+      String(item.name || "").trim().toLowerCase() === giftName
     );
 
     if (exists) {
@@ -485,6 +490,13 @@ function cleanOldDuplicates() {
     }
   });
 
+  // Guardamos SIEMPRE la colección limpia
+  localStorage.setItem(
+    "pipinaCollection",
+    JSON.stringify(unique)
+  );
+
+  // Sumamos las estrellas de los repetidos
   if (bonusStars > 0) {
     const currentStars =
       Number(localStorage.getItem("pipinaStars") || 0);
@@ -492,11 +504,6 @@ function cleanOldDuplicates() {
     localStorage.setItem(
       "pipinaStars",
       String(currentStars + bonusStars)
-    );
-
-    localStorage.setItem(
-      "pipinaCollection",
-      JSON.stringify(unique)
     );
   }
 }
