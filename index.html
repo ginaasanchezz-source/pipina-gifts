@@ -408,6 +408,102 @@ function updatePotionTimer() {
 
 updatePotionTimer();
 setInterval(updatePotionTimer, 1000);
+  // ⭐ SISTEMA DE DUPLICADOS Y ESTRELLAS
+
+function starValue(gift) {
+  if (gift.rarity.includes("LEGENDARIO")) return 100;
+  if (gift.rarity.includes("ÉPICO")) return 40;
+  if (gift.rarity.includes("RARO")) return 15;
+  return 5;
+}
+
+function updateStars() {
+  const stars = Number(localStorage.getItem("pipinaStars") || 0);
+  const starDisplay = document.querySelector(".stars");
+
+  if (starDisplay) {
+    starDisplay.textContent = "⭐ " + stars;
+  }
+}
+
+// Reemplazamos la función anterior de guardar
+saveGift = function () {
+  const stored =
+    JSON.parse(localStorage.getItem("pipinaCollection")) || [];
+
+  const duplicate = stored.some(
+    gift => gift.name === currentGift.name
+  );
+
+  if (duplicate) {
+    const reward = starValue(currentGift);
+    const currentStars =
+      Number(localStorage.getItem("pipinaStars") || 0);
+
+    localStorage.setItem(
+      "pipinaStars",
+      String(currentStars + reward)
+    );
+
+    alert(
+      "✨ ¡REGALO REPETIDO! ✨\n\n" +
+      currentGift.emoji + " " + currentGift.name +
+      "\nSe convirtió en +" + reward + " ⭐"
+    );
+  } else {
+    stored.push(currentGift);
+
+    localStorage.setItem(
+      "pipinaCollection",
+      JSON.stringify(stored)
+    );
+  }
+
+  document.getElementById("reward").style.display = "none";
+
+  renderCollection();
+  updateStars();
+};
+
+// 🧹 LIMPIAR DUPLICADOS QUE YA EXISTEN
+function cleanOldDuplicates() {
+  const stored =
+    JSON.parse(localStorage.getItem("pipinaCollection")) || [];
+
+  const unique = [];
+  let bonusStars = 0;
+
+  stored.forEach(gift => {
+    const exists = unique.some(
+      item => item.name === gift.name
+    );
+
+    if (exists) {
+      bonusStars += starValue(gift);
+    } else {
+      unique.push(gift);
+    }
+  });
+
+  if (bonusStars > 0) {
+    const currentStars =
+      Number(localStorage.getItem("pipinaStars") || 0);
+
+    localStorage.setItem(
+      "pipinaStars",
+      String(currentStars + bonusStars)
+    );
+
+    localStorage.setItem(
+      "pipinaCollection",
+      JSON.stringify(unique)
+    );
+  }
+}
+
+cleanOldDuplicates();
+renderCollection();
+updateStars();
 </script>
 </body>
 </html>
