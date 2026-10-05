@@ -551,18 +551,60 @@ function cleanOldDuplicates() {
     );
   }
 } 
- function openShop() {
-  const shop = document.getElementById("magicShop");
+ function openShop() { 
 
-  if (shop.style.display === "none") {
-    shop.style.display = "grid";
-    shop.style.gridTemplateColumns = "repeat(2, 1fr)";
-    shop.style.gap = "15px";
-  } else {
-    shop.style.display = "none";
+   function buyGift(name, emoji, rarity, collection, price) {
+  let stars = Number(localStorage.getItem("pipinaStars") || 0);
+
+  if (stars < price) {
+    const missing = price - stars;
+
+    alert(
+      "✨ TE FALTAN ESTRELLAS ✨\n\n" +
+      "⭐ Tenés: " + stars + "\n" +
+      "🎁 Necesitás: " + price + "\n\n" +
+      "Te faltan " + missing + " ⭐"
+    );
+
+    return;
   }
-}
 
+  let stored =
+    JSON.parse(localStorage.getItem("pipinaCollection")) || [];
+
+  const exists = stored.some(item => item.name === name);
+
+  if (exists) {
+    alert("🎁 Ya tenés este regalo en tu colección.");
+    return;
+  }
+
+  stars = stars - price;
+
+  stored.push({
+    name: name,
+    emoji: emoji,
+    rarity: rarity,
+    collection: collection
+  });
+
+  localStorage.setItem("pipinaStars", String(stars));
+
+  localStorage.setItem(
+    "pipinaCollection",
+    JSON.stringify(stored)
+  );
+
+  updateStars();
+  renderCollection();
+
+  alert(
+    "🎉 ¡CANJE REALIZADO! 🎉\n\n" +
+    emoji + " " + name + "\n\n" +
+    "⭐ Te quedan: " + stars
+  );
+}
+  
 cleanOldDuplicates();
 renderCollection();
 updateStars();
