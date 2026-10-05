@@ -223,7 +223,8 @@
   </div>
 
 </div>
-
+<h2 class="collection-title">🛍️ Tienda Mágica</h2>
+<button class="open" onclick="openShop()">✨ ENTRAR A LA TIENDA</button>
 <div class="reward" id="reward">
   <div class="reward-box">
 
@@ -506,6 +507,15 @@ function cleanOldDuplicates() {
       String(currentStars + bonusStars)
     );
   }
+} 
+  function openShop() {
+  const stars = Number(localStorage.getItem("pipinaStars")) || 0;
+
+  alert(
+    "🛍️✨ TIENDA MÁGICA ✨🛍️\n\n" +
+    "⭐ Tus estrellas: " + stars + "\n\n" +
+    "Muy pronto podrás canjear tus estrellas por regalos mágicos 🎁"
+  );
 }
 
 cleanOldDuplicates();
