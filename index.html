@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pipina Gifts</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: white;
+      background:
+        radial-gradient(circle at 50% 0%, #652061 0%, transparent 35%),
+        radial-gradient(circle at 10% 70%, #38194c 0%, transparent 35%),
+        #09070d;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: auto;
+      padding: 22px 18px 100px;
+    }
+
+    .logo {
+      text-align: center;
+      font-family: Georgia, serif;
+      font-size: 38px;
+      font-weight: bold;
+      color: #ffd987;
+      text-shadow: 0 0 18px #ff38c7;
+    }
+
+    .logo span { color: #ff6bd5; }
+
+    .tagline {
+      text-align: center;
+      letter-spacing: 4px;
+      font-size: 11px;
+      color: #e7cba0;
+      margin: 5px 0 25px;
+    }
+
+    .user {
+      border: 1px solid #d6a657;
+      border-radius: 20px;
+      padding: 13px 16px;
+      background: rgba(0,0,0,.55);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .stars { color: #ffd66b; }
+
+    .hero {
+      text-align: center;
+      border: 1px solid #e2af5b;
+      border-radius: 28px;
+      padding: 24px 18px;
+      background: linear-gradient(180deg, #241126, #100b13);
+      box-shadow: 0 0 30px rgba(255,61,198,.16);
+    }
+
+    .potion {
+      font-size: 100px;
+      filter: drop-shadow(0 0 25px #ff44d1);
+      animation: float 2.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      50% { transform: translateY(-8px) scale(1.04); }
+    }
+
+    h1 {
+      font-family: Georgia, serif;
+      color: #ffd98c;
+      margin: 5px;
+    }
+
+    .hero p { color: #e7d7e4; }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 17px;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .open {
+      margin-top: 15px;
+      background: linear-gradient(90deg,#ff55c8,#ff9edb);
+      color: #160713;
+      box-shadow: 0 0 22px #ff42bf66;
+    }
+
+    .collection-title {
+      margin: 27px 0 12px;
+      color: #ffd98c;
+    }
+
+    .collection {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 12px;
+    }
+
+    .card {
+      min-height: 135px;
+      border: 1px solid #9d7444;
+      border-radius: 20px;
+      background: #120d15;
+      padding: 17px;
+      text-align: center;
+    }
+
+    .card .emoji { font-size: 47px; }
+    .card small { color: #d58ac8; }
+
+    .empty {
+      grid-column: 1/-1;
+      color: #aaa;
+      text-align: center;
+      padding: 25px;
+    }
+
+    .reward {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(4,2,7,.94);
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+    }
+
+    .reward-box {
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      border: 2px solid #ff66d4;
+      border-radius: 30px;
+      background: radial-gradient(circle,#52234d,#110b14 65%);
+      padding: 35px 22px;
+      box-shadow: 0 0 60px #ff35ca55;
+    }
+
+    .reward-emoji {
+      font-size: 100px;
+      animation: reveal .7s ease;
+    }
+
+    @keyframes reveal {
+      from { transform: scale(.2) rotate(-25deg); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .rarity {
+      display: inline-block;
+      margin: 8px;
+      padding: 6px 15px;
+      border-radius: 999px;
+      background: #762c77;
+      color: #ffd6fa;
+      font-size: 13px;
+    }
+
+    .save {
+      margin-top: 20px;
+      background: linear-gradient(90deg,#e7b85c,#ffe39a);
+      color: #1c1004;
+    }
+
+    .timer {
+      font-size: 13px;
+      margin-top: 13px;
+      color: #cbaec7;
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <div class="logo">PIPINA <span>GIFTS</span> 🎁</div>
+  <div class="tagline">COLLECT • GIFT • PLAY</div>
+
+  <div class="user">
+    <span>✨ Hola, <b id="username">Pipina</b></span>
+    <span class="stars">⭐ 0</span>
+  </div>
+
+  <section class="hero">
+    <div class="potion">🧪</div>
+    <h1>Tu poción diaria</h1>
+    <p>Una sorpresa mágica te espera.</p>
+
+    <button class="open" id="openButton" onclick="openPotion()">
+      🧪 ABRIR GRATIS
+    </button>
+
+    <div class="timer" id="timer">
+      Disponible una vez cada 24 horas
+    </div>
+  </section>
+
+  <h2 class="collection-title">📖 Mi colección</h2>
+
+  <div class="collection" id="collection">
+    <div class="empty" id="empty">
+      Todavía no tenés regalos.<br>
+      ¡Abrí tu primera poción!
+    </div>
+  </div>
+
+</div>
+
+<div class="reward" id="reward">
+  <div class="reward-box">
+
+    <div>✨ ¡ENCONTRASTE! ✨</div>
+
+    <div class="reward-emoji" id="rewardEmoji"></div>
+
+    <div class="rarity" id="rewardRarity"></div>
+
+    <h1 id="rewardName"></h1>
+
+    <p id="rewardCollection"></p>
+
+    <button class="save" onclick="saveGift()">
+      🎁 GUARDAR EN MI COLECCIÓN
+    </button>
+
+  </div>
+</div>
+
+<script>
+  const tg = window.Telegram?.WebApp;
+
+  if (tg) {
+    tg.ready();
+    tg.expand();
+
+    const user = tg.initDataUnsafe?.user;
+
+    if (user?.first_name) {
+      document.getElementById("username").textContent = user.first_name;
+    }
+  }
+
+  const gifts = [
+    {
+      name: "Cuarzo Blanco",
+      emoji: "💎",
+      rarity: "⭐ COMÚN",
+      collection: "Piedras Mágicas"
+    },
+    {
+      name: "Chispa",
+      emoji: "🦊",
+      rarity: "⭐ COMÚN",
+      collection: "Animales Fantásticos"
+    },
+    {
+      name: "Lunita",
+      emoji: "🐰",
+      rarity: "💜 RARO",
+      collection: "Animales Fantásticos"
+    },
+    {
+      name: "Planeta Rosa",
+      emoji: "🪐",
+      rarity: "💜 RARO",
+      collection: "Planetas y Galaxias"
+    },
+    {
+      name: "Dragona",
+      emoji: "🐉",
+      rarity: "💎 ÉPICO",
+      collection: "Animales Fantásticos"
+    },
+    {
+      name: "Fénix",
+      emoji: "🔥",
+      rarity: "👑 LEGENDARIO",
+      collection: "Animales Fantásticos"
+    }
+  ];
+
+  let currentGift = null;
+
+  function openPotion() {
+    currentGift = gifts[Math.floor(Math.random() * gifts.length)];
+
+    document.getElementById("rewardEmoji").textContent =
+      currentGift.emoji;
+
+    document.getElementById("rewardName").textContent =
+      currentGift.name;
+
+    document.getElementById("rewardRarity").textContent =
+      currentGift.rarity;
+
+    document.getElementById("rewardCollection").textContent =
+      currentGift.collection;
+
+    document.getElementById("reward").style.display = "flex";
+
+    if (tg?.HapticFeedback) {
+      tg.HapticFeedback.notificationOccurred("success");
+    }
+  }
+
+  function saveGift() {
+    const stored =
+      JSON.parse(localStorage.getItem("pipinaCollection") || "[]");
+
+    stored.push(currentGift);
+
+    localStorage.setItem(
+      "pipinaCollection",
+      JSON.stringify(stored)
+    );
+
+    document.getElementById("reward").style.display = "none";
+
+    renderCollection();
+  }
+
+  function renderCollection() {
+    const stored =
+      JSON.parse(localStorage.getItem("pipinaCollection") || "[]");
+
+    const container = document.getElementById("collection");
+
+    if (!stored.length) {
+      container.innerHTML =
+        '<div class="empty">Todavía no tenés regalos.<br>¡Abrí tu primera poción!</div>';
+      return;
+    }
+
+    container.innerHTML = "";
+
+    stored.forEach(gift => {
+      container.innerHTML += `
+        <div class="card">
+          <div class="emoji">${gift.emoji}</div>
+          <b>${gift.name}</b><br>
+          <small>${gift.rarity}</small><br>
+          <small>${gift.collection}</small>
+        </div>
+      `;
+    });
+  }
+
+  renderCollection();
+</script>
+</body>
+</html>
